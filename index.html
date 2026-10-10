@@ -307,8 +307,6 @@ section{scroll-margin-top:calc(var(--nav-h) + 8px)}
 }
 .platillo:hover{border-color:var(--linea);transform:translateY(-2px);box-shadow:0 10px 24px -18px rgba(0,0,0,.45)}
 .platillo.fav{border-color:rgba(217,165,33,.6);background:linear-gradient(180deg,#fffaf0,#fff)}
-.platillo-foto{width:84px;height:84px;border-radius:10px;overflow:hidden;flex:none;background:var(--crema)}
-.platillo-foto img{width:100%;height:100%;object-fit:cover}
 .platillo-info{flex:1;min-width:0}
 .platillo-cabeza{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
 .platillo h4{font-size:1.08rem;margin:0;font-weight:600}
@@ -922,7 +920,6 @@ const UBICACION = { lat: 19.0451344, lng: -98.2017553 };
      precio  → número en MXN, o null para mostrar "Consultar precio"
      fav     → true para la etiqueta "Favorito de nuestros clientes"
      temporada → true para la etiqueta "De temporada"
-     foto    → (opcional) ruta de una foto
      pendiente → true para un espacio "Platillo por confirmar"
    --------------------------------------------------------------------- */
 const MENU = [
@@ -1019,7 +1016,7 @@ const MENU = [
     es:{ n:'Vaso de Leche (230 ml)', d:'' }, en:{ n:'Glass of Milk (230 ml)', d:'' } },
 
   /* ---------- PLATOS FUERTES · Moles y pipianes ---------- */
-  { cat:'fuertes', grupo:'moles', precio:200, fav:true, foto:'img/mole-poblano.jpg',
+  { cat:'fuertes', grupo:'moles', precio:200, fav:true,
     es:{ n:'Mole Poblano de la Casa', d:'Con muslo, media pechuga o pierna de pollo, acompañado de arroz y tortillas hechas a mano.' },
     en:{ n:'House Mole Poblano', d:'Chicken thigh, half breast or leg in the house mole poblano, with rice and handmade tortillas.' } },
   { cat:'fuertes', grupo:'moles', precio:220,
@@ -1036,7 +1033,7 @@ const MENU = [
     en:{ n:'Mole poblano or pipián paste (to go)', d:'Price per kilogram — take the flavor home.' } },
 
   /* ---------- PLATOS FUERTES · Enchiladas ---------- */
-  { cat:'fuertes', grupo:'enchiladas', precio:210, fav:true, foto:'img/menu-enchiladas-tres-moles.jpg',
+  { cat:'fuertes', grupo:'enchiladas', precio:210, fav:true,
     es:{ n:'Enchiladas Tres Moles', d:'Tres enchiladas con mole poblano, pipián rojo y pipián verde, acompañadas de arroz.' },
     en:{ n:'Three-Mole Enchiladas', d:'Three enchiladas in mole poblano, red pipián and green pipián, served with rice.' } },
   { cat:'fuertes', grupo:'enchiladas', precio:200,
@@ -1050,10 +1047,10 @@ const MENU = [
   { cat:'fuertes', grupo:'especiales', precio:265, fav:true,
     es:{ n:'Mixiote de Carnero', d:'Carne de carnero adobada y cocida al vapor, con arroz rojo, guacamole y tortillas hechas a mano.' },
     en:{ n:'Lamb Mixiote', d:'Adobo-marinated lamb steamed in its parcel, with red rice, guacamole and handmade tortillas.' } },
-  { cat:'fuertes', grupo:'especiales', precio:580, temporada:true, foto:'img/menu-chiles-en-nogada.jpg',
+  { cat:'fuertes', grupo:'especiales', precio:580, temporada:true,
     es:{ n:'Chiles en Nogada', d:'Platillo de temporada. Pregunta por su disponibilidad.' },
     en:{ n:'Chiles en Nogada', d:'Seasonal dish. Please ask about availability.' } },
-  { cat:'fuertes', grupo:'especiales', precio:298, foto:'img/menu-tampiquena.jpg',
+  { cat:'fuertes', grupo:'especiales', precio:298,
     es:{ n:'Tampiqueña', d:'Arrachera (180 g) o filete de res (180 g) a la plancha, con dos enchiladas de mole poblano, dos chalupas, guacamole, arroz y frijoles refritos.' },
     en:{ n:'Tampiqueña', d:'Grilled skirt steak (180 g) or beef fillet (180 g) with two mole poblano enchiladas, two chalupas, guacamole, rice and refried beans.' } },
   { cat:'fuertes', grupo:'especiales', precio:298,
@@ -1113,7 +1110,7 @@ const MENU = [
     es:{ n:'Arroz Rojo', d:'' }, en:{ n:'Red Rice', d:'' } },
 
   /* ---------- ANTOJITOS · Entradas ---------- */
-  { cat:'antojitos', grupo:'entradas', precio:75, foto:'img/menu-chalupas.jpg',
+  { cat:'antojitos', grupo:'entradas', precio:75,
     es:{ n:'Chalupas Poblanas (4 piezas)', d:'Tortillas pequeñas con salsa verde o roja y carne de res.' },
     en:{ n:'Poblano Chalupas (4 pieces)', d:'Small fried tortillas with green or red salsa and shredded beef.' } },
   { cat:'antojitos', grupo:'entradas', precio:150,
@@ -1132,7 +1129,7 @@ const MENU = [
     en:{ n:'Guacamole Platter', d:'Serves three — with Oaxaca cheese, tortilla chips and pork crackling.' } },
 
   /* ---------- ANTOJITOS · Tacos ---------- */
-  { cat:'antojitos', grupo:'tacos', precio:160, foto:'img/menu-tacos.jpg',
+  { cat:'antojitos', grupo:'tacos', precio:160,
     es:{ n:'Tacos de Arrachera', d:'4 piezas acompañados de salsa de molcajete.' }, en:{ n:'Skirt Steak Tacos', d:'4 pieces with stone-ground molcajete salsa.' } },
   { cat:'antojitos', grupo:'tacos', precio:160,
     es:{ n:'Tacos de Cochinita', d:'4 piezas.' }, en:{ n:'Cochinita Pibil Tacos', d:'4 pieces.' } },
@@ -1567,9 +1564,7 @@ function htmlPlatillo(p) {
     p.fav ? `<span class="etiqueta fav">★ ${t('favorito')}</span>` : '',
     p.temporada ? `<span class="etiqueta temp">${t('temporada')}</span>` : ''
   ].join('');
-  const foto = p.foto ? `<div class="platillo-foto"><img src="${p.foto}" alt="" loading="lazy"></div>` : '';
   return `<article class="platillo${p.fav ? ' fav' : ''}">
-    ${foto}
     <div class="platillo-info">
       <div class="platillo-cabeza"><h4>${txt.n}</h4>${precio}</div>
       ${txt.d ? `<p>${txt.d}</p>` : ''}
